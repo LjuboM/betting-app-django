@@ -1,0 +1,4 @@
+*.pyc
+Betting/__pycache__
+api/migrations/
+Betting/secret_settings.py
