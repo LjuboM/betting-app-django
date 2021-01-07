@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Transaction, Types, Match
+from .models import User, Transaction, Types, Match, Ticket, Odds, TicketOdds
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -38,3 +38,43 @@ class MatchTypesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Match
         fields = ('id', 'match_time', 'home', 'away', 'types')
+
+
+class TicketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = '__all__'
+
+
+class TicketTransactionSerializer(serializers.ModelSerializer):
+    transaction = TransactionUserSerializer()
+    class Meta:
+        model = Ticket
+        fields = ('id', 'total_odd', 'possible_gain', 'transaction')
+
+
+class OddsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Odds
+        fields = '__all__'
+
+
+class OddsMatchSerializer(serializers.ModelSerializer):
+    match = MatchTypesSerializer()
+    class Meta:
+        model = Ticket
+        fields = ('id', 'odd_type', 'odd1', 'odd2', 'odd3', 'odd4', 'odd5', 'odd6', 'match')
+
+
+class TicketOddsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TicketOdds
+        fields = '__all__'
+
+
+class AllSerializer(serializers.ModelSerializer):
+    ticket = TicketTransactionSerializer()
+    odds = OddsMatchSerializer()
+    class Meta:
+        model = Ticket
+        fields = ('id', 'ticket', 'odds', 'odd', 'type_value')
