@@ -1,6 +1,6 @@
-from .models import User, Transaction, Types
+from .models import User, Transaction, Types, Match
 from django.shortcuts import render
-from .serializers import UserSerializer, TransactionUserSerializer, TransactionSerializer, TypesSerializer
+from .serializers import UserSerializer, TransactionUserSerializer, TransactionSerializer, TypesSerializer, MatchSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -122,6 +122,43 @@ class TypesView(APIView):
 
     def post(self, request):
         serializer = TypesSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class MatchView(APIView):
+
+    def get(self, request, id):
+        match = get_object(id, Match)
+        serializer = MatchSerializer(match)
+        return Response(serializer.data)
+    
+    def put(self, request, id):
+        match = get_object(id, Match)
+        serializer = MatchSerializer(match, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id):
+        match = get_object(id, Match)
+        match.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class MatchesView(APIView):
+
+    def get(self, request):
+        match = Match.objects.all()
+        serializer = MatchSerializer(match, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = MatchSerializer(data=request.data)
 
         if serializer.is_valid():
             serializer.save()

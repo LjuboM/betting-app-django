@@ -39,4 +39,13 @@ class Types(models.Model):
 
     def __str__(self):
         return self.name
-        
+
+
+class Match(models.Model):
+    match_time = models.DateTimeField()
+    home = models.CharField(max_length=40)
+    away = models.CharField(max_length=40)
+    types = models.ForeignKey(Types, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "%s %s" % (self.home, self.away)
