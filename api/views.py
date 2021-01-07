@@ -201,3 +201,40 @@ class TicketsView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class OddsPerMatchView(APIView):
+
+    def get(self, request, id):
+        odds = get_object(id, Odds)
+        serializer = OddsSerializer(odds)
+        return Response(serializer.data)
+    
+    def put(self, request, id):
+        odds = get_object(id, Odds)
+        serializer = OddsSerializer(odds, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id):
+        odds = get_object(id, Odds)
+        odds.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class OddsView(APIView):
+
+    def get(self, request):
+        odds = Odds.objects.all()
+        serializer = OddsSerializer(odds, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = OddsSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
