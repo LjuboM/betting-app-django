@@ -49,3 +49,33 @@ class Match(models.Model):
 
     def __str__(self):
         return "%s %s" % (self.home, self.away)
+
+
+class Odds(models.Model):
+    odd_type = models.CharField(max_length=15)
+    odd1 = models.FloatField()
+    odd2 = models.FloatField()
+    odd3 = models.FloatField()
+    odd4 = models.FloatField()
+    odd5 = models.FloatField()
+    odd6 = models.FloatField()
+    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.id
+
+
+class Ticket(models.Model):
+    total_odd = models.FloatField()
+    possible_gain = models.FloatField()
+    ticket_odds = models.ManyToManyField(Odds, through='TicketOdds')
+
+    def __str__(self):
+        return "%s %s" % (self.total_odd, self.possible_gain)
+
+
+class TicketOdds(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
+    odds = models.ForeignKey(Odds, on_delete=models.CASCADE)
+    odd = models.FloatField()
+    type_value = models.CharField(max_length=15)
