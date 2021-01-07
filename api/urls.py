@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import UserView, UsersView, TransactionView, TransactionsView, TypesPerSportView, TypesView, MatchView, MatchesView
+from .views import UserView, UsersView, TransactionView, TransactionsView, TypesPerSportView, TypesView, MatchView, MatchesView, TicketView, TicketsView
 
 urlpatterns = [
     path('api/user/<int:id>/', UserView.as_view()),
@@ -13,4 +13,7 @@ urlpatterns = [
 
     path('api/match/<int:id>/', MatchView.as_view()),
     path('api/match/', MatchesView.as_view()),
+
+    path('api/ticket/<int:id>/', TicketView.as_view()),
+    path('api/ticket/', TicketsView.as_view()),
 ]

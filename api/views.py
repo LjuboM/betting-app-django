@@ -1,6 +1,6 @@
-from .models import User, Transaction, Types, Match
+from .models import User, Transaction, Types, Match, Ticket, Odds, TicketOdds
 from django.shortcuts import render
-from .serializers import UserSerializer, TransactionUserSerializer, TransactionSerializer, TypesSerializer, MatchSerializer
+from .serializers import UserSerializer, TransactionUserSerializer, TransactionSerializer, TypesSerializer, MatchSerializer, TicketSerializer, TicketTransactionSerializer, OddsSerializer, OddsMatchSerializer, TicketOddsSerializer, AllSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -159,6 +159,43 @@ class MatchesView(APIView):
 
     def post(self, request):
         serializer = MatchSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TicketView(APIView):
+
+    def get(self, request, id):
+        ticket = get_object(id, Ticket)
+        serializer = TicketSerializer(ticket)
+        return Response(serializer.data)
+    
+    def put(self, request, id):
+        ticket = get_object(id, Ticket)
+        serializer = TicketSerializer(ticket, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id):
+        ticket = get_object(id, Ticket)
+        ticket.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class TicketsView(APIView):
+
+    def get(self, request):
+        ticket = Ticket.objects.all()
+        serializer = TicketSerializer(ticket, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = TicketSerializer(data=request.data)
 
         if serializer.is_valid():
             serializer.save()
