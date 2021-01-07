@@ -1,6 +1,6 @@
-from .models import User, Transaction
+from .models import User, Transaction, Types
 from django.shortcuts import render
-from .serializers import UserSerializer, TransactionUserSerializer, TransactionSerializer
+from .serializers import UserSerializer, TransactionUserSerializer, TransactionSerializer, TypesSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -87,6 +87,43 @@ class TransactionsView(APIView):
             user = get_object(request.data['user'], User)
             user.money = user.money + request.data['money']
             user.save()
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TypesPerSportView(APIView):
+
+    def get(self, request, id):
+        types = get_object(id, Types)
+        serializer = TypesSerializer(types)
+        return Response(serializer.data)
+    
+    def put(self, request, id):
+        types = get_object(id, Types)
+        serializer = TypesSerializer(types, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id):
+        types = get_object(id, Types)
+        types.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class TypesView(APIView):
+
+    def get(self, request):
+        types = Types.objects.all()
+        serializer = TypesSerializer(types, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = TypesSerializer(data=request.data)
+
+        if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

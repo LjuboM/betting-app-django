@@ -26,3 +26,17 @@ class Transaction(models.Model):
 
     def __str__(self):
         return "%s %s %s %s" % (self.id, self.transaction_time, self.transaction_type, self.money)
+
+
+class Types(models.Model):
+    name = models.CharField(max_length=40)
+    type1 = models.CharField(max_length=10)
+    type2 = models.CharField(max_length=10)
+    type3 = models.CharField(max_length=10)
+    type4 = models.CharField(max_length=10)
+    type5 = models.CharField(max_length=10)
+    type6 = models.CharField(max_length=10)
+
+    def __str__(self):
+        return self.name
+        

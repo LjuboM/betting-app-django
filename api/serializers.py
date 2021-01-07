@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Transaction
+from .models import User, Transaction, Types
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -18,4 +18,9 @@ class TransactionUserSerializer(serializers.ModelSerializer):
 class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
+        fields = '__all__'
+
+class TypesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Types
         fields = '__all__'
