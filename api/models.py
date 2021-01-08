@@ -68,6 +68,7 @@ class Odds(models.Model):
 class Ticket(models.Model):
     total_odd = models.FloatField()
     possible_gain = models.FloatField()
+    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
     ticket_odds = models.ManyToManyField(Odds, through='TicketOdds')
 
     def __str__(self):
