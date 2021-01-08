@@ -19,7 +19,7 @@ def validate_money(value):
 
 
 class Transaction(models.Model):
-    transaction_time = models.DateTimeField()
+    transaction_time = models.DateTimeField(auto_now_add=True)
     transaction_type = models.BooleanField(default=False)
     money = models.PositiveIntegerField(validators=[validate_money])
     user = models.ForeignKey(User, on_delete=models.CASCADE)
