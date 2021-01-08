@@ -20,7 +20,7 @@ class UserView(APIView):
         user = get_object(id, User)
         serializer = UserSerializer(user)
         return Response(serializer.data)
-    
+#Basic user can't use this, for future this could be allowed but only for some fiels.
     def put(self, request, id):
         user = get_object(id, User)
         serializer = UserSerializer(user, data=request.data)
@@ -28,7 +28,7 @@ class UserView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+#Basic user can't use this 
     def delete(self, request, id):
         user = get_object(id, User)
         user.delete()
@@ -36,12 +36,12 @@ class UserView(APIView):
 
 
 class UsersView(APIView):
-
+#Basic user can't use this 
     def get(self, request):
         users = User.objects.all()
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
-
+#Basic user can't use this 
     def post(self, request):
         serializer = UserSerializer(data=request.data)
 
@@ -52,12 +52,13 @@ class UsersView(APIView):
 
 
 class TransactionView(APIView):
-
+#Basic user can't use this 
     def get(self, request, id):
         transaction = get_object(id, Transaction)
         serializer = TransactionSerializer(transaction)
         return Response(serializer.data)
-    
+#In Future possible upgrade: get current money value and change it according to Put new value.
+#meaning if Admin changed the transaction because it was wrong.
     def put(self, request, id):
         transaction = get_object(id, Transaction)
         serializer = TransactionSerializer(transaction, data=request.data)
@@ -65,7 +66,8 @@ class TransactionView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+#In future possible upgrade: Deleting transaction can have 2 outcomes: If basic user deletes it nothing changes in money value of the User,
+#if admin deletes it then the reason might be because the transaction is wrong.
     def delete(self, request, id):
         transaction = get_object(id, Transaction)
         transaction.delete()
@@ -93,12 +95,12 @@ class TransactionsView(APIView):
 
 
 class TypesPerSportView(APIView):
-
+#Basic user can't use this 
     def get(self, request, id):
         types = get_object(id, Types)
         serializer = TypesSerializer(types)
         return Response(serializer.data)
-    
+#Basic user can't use this 
     def put(self, request, id):
         types = get_object(id, Types)
         serializer = TypesSerializer(types, data=request.data)
@@ -106,7 +108,7 @@ class TypesPerSportView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+#Basic user can't use this 
     def delete(self, request, id):
         types = get_object(id, Types)
         types.delete()
@@ -119,7 +121,7 @@ class TypesView(APIView):
         types = Types.objects.all()
         serializer = TypesSerializer(types, many=True)
         return Response(serializer.data)
-
+#Basic user can't use this 
     def post(self, request):
         serializer = TypesSerializer(data=request.data)
 
@@ -130,12 +132,12 @@ class TypesView(APIView):
 
 
 class MatchView(APIView):
-
+#Basic user can't use this 
     def get(self, request, id):
         match = get_object(id, Match)
         serializer = MatchSerializer(match)
         return Response(serializer.data)
-    
+#Basic user can't use this    
     def put(self, request, id):
         match = get_object(id, Match)
         serializer = MatchSerializer(match, data=request.data)
@@ -143,7 +145,7 @@ class MatchView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+#Basic user can't use this
     def delete(self, request, id):
         match = get_object(id, Match)
         match.delete()
@@ -151,12 +153,12 @@ class MatchView(APIView):
 
 
 class MatchesView(APIView):
-
+#Basic user can't use this 
     def get(self, request):
         match = Match.objects.all()
         serializer = MatchSerializer(match, many=True)
         return Response(serializer.data)
-
+#Basic user can't use this
     def post(self, request):
         serializer = MatchSerializer(data=request.data)
 
@@ -172,7 +174,7 @@ class TicketView(APIView):
         ticket = get_object(id, Ticket)
         serializer = TicketSerializer(ticket)
         return Response(serializer.data)
-    
+#Ticket should not be edited from here. but leaving this option for now.
     def put(self, request, id):
         ticket = get_object(id, Ticket)
         serializer = TicketSerializer(ticket, data=request.data)
@@ -180,7 +182,7 @@ class TicketView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+#Ticket is not supposed to be deleted from here... but leaving this option for now.
     def delete(self, request, id):
         ticket = get_object(id, Ticket)
         ticket.delete()
@@ -193,7 +195,7 @@ class TicketsView(APIView):
         ticket = Ticket.objects.all()
         serializer = TicketSerializer(ticket, many=True)
         return Response(serializer.data)
-
+#Tickets are not supposed to be added trough this option... but leaving this option for now.
     def post(self, request):
         serializer = TicketSerializer(data=request.data)
 
@@ -209,7 +211,7 @@ class OddsPerMatchView(APIView):
         odds = get_object(id, Odds)
         serializer = OddsSerializer(odds)
         return Response(serializer.data)
-    
+#Basic user can't use this
     def put(self, request, id):
         odds = get_object(id, Odds)
         serializer = OddsSerializer(odds, data=request.data)
@@ -217,7 +219,7 @@ class OddsPerMatchView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+#Basic user can't use this
     def delete(self, request, id):
         odds = get_object(id, Odds)
         odds.delete()
@@ -230,9 +232,46 @@ class OddsView(APIView):
         odds = Odds.objects.all()
         serializer = OddsSerializer(odds, many=True)
         return Response(serializer.data)
-
+#Basic user can't use this
     def post(self, request):
         serializer = OddsSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TicketOddsDetailsView(APIView):
+
+    def get(self, request, id):
+        ticketOdds = get_object(id, TicketOdds)
+        serializer = AllSerializer(ticketOdds)
+        return Response(serializer.data)
+#basic user can't use this. leaving this option for future for Admins, would have to adopt it, shuold change to AllSerializer.
+    def put(self, request, id):
+        ticketOdds = get_object(id, TicketOdds)
+        serializer = TicketOddsSerializer(ticketOdds, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#basic user can't use this. leaving this option for future for Admins, would have to adopt it, shuold change to AllSerializer.
+    def delete(self, request, id):
+        ticketOdds = get_object(id, TicketOdds)
+        ticketOdds.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class TicketOddsView(APIView):
+#Basic user can't use this, gets all pairs of all tickets
+    def get(self, request):
+        ticketOdds = TicketOdds.objects.all()
+        serializer = TicketOddsSerializer(ticketOdds, many=True)
+        return Response(serializer.data)
+#Still needs to be done properly
+    def post(self, request):
+        serializer = AllSerializer(data=request.data)
 
         if serializer.is_valid():
             serializer.save()
