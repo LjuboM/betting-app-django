@@ -76,5 +76,5 @@ class AllSerializer(serializers.ModelSerializer):
     ticket = TicketTransactionSerializer()
     odds = OddsMatchSerializer()
     class Meta:
-        model = Ticket
+        model = TicketOdds
         fields = ('id', 'ticket', 'odds', 'odd', 'type_value')
