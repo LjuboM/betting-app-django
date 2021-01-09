@@ -14,7 +14,7 @@ class Tickets extends Component {
     }
     
     fetchTickets = () => {
-        fetch('/api/ticket', {})
+        fetch('/api/ticket/', {})
         .then(body => body.json())
           .then(body => this.setState({Tickets : body , isLoading: false}))
           .catch(error => console.log(error)); 
@@ -32,7 +32,7 @@ class Tickets extends Component {
             this.setState({TicketOdds : updatedTicketOdds});
         }
         else{
-            fetch('/api/ticketOdds/' + ticketId, {})
+            fetch('/api/ticketOdds/' + ticketId + '/', {})
             .then(body => body.json())
             .then(body => {
                 const modifiedBody = this.state.TicketOdds.concat(body);

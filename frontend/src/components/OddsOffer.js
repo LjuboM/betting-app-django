@@ -14,14 +14,14 @@ class OddsOffer extends Component {
     }
     
     fetchTypes = () => {
-        fetch('/api/types', {})
+        fetch('/api/types/', {})
         .then(body => body.json())
           .then(body => this.setState({Types : body}))
           .catch(error => console.log(error)); 
       };
 
     fetchOdds = () => {
-        fetch('/api/odds', {})
+        fetch('/api/odds/', {})
         .then(body => body.json())
         .then(body => {
             let modifiedBody = body;

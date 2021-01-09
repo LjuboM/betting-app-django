@@ -17,7 +17,7 @@ class MyProvider extends Component {
       totalOdd : 1,
       possibleGain : 0,
       tax : 0,
-      money : '',
+      money : 0,
       isHidden: true,
       alertMessage : '',
       popUpSeen : false,
@@ -61,7 +61,7 @@ class MyProvider extends Component {
   }
 
   async finalizeNewTicket(finalTicket){
-    await fetch(`/api/ticket`, {
+    await fetch(`/api/ticketOdds/`, {
         method : 'POST',
         headers : {
           'Accept': 'application/json',
@@ -80,6 +80,7 @@ class MyProvider extends Component {
         .catch((error) => {
           this.setState({ matchAlreadyStartedMessage : 'Remove match or matches that already started!' })
         });
+        console.log(JSON.stringify(finalTicket))
   }
 
   removePair(oddId, odd){
@@ -94,7 +95,7 @@ class MyProvider extends Component {
       newMoneyValue = '';
     }
     //check if constraint is no longer needed
-    if(this.state.alertMessage === 'With Special offer you have to combine 5 Basic offers with Odd >= 1.10!' && this.state.NewTicket.filter(pair => pair.odds.id === oddId && pair.odds.type === "Special offer").length >= 1){
+    if(this.state.alertMessage === 'With Special offer you have to combine 5 Basic offers with Odd >= 1.10!' && this.state.NewTicket.filter(pair => pair.odds.id === oddId && pair.odds.odd_type === "Special offer").length >= 1){
       isAlertNotNeeded = true;
       newAlertMessage = '';
     }
@@ -109,7 +110,7 @@ class MyProvider extends Component {
   }
 
   fetchUser = () => {
-    fetch('/api/user/1', {})
+    fetch('/api/user/1/', {})
     .then(body => body.json())
     .then(body => this.setState({User : body}))
     .catch(error => console.log(error)); 
@@ -141,7 +142,7 @@ class MyProvider extends Component {
                     this.updateMoneyValue(newMoneyValue, addingMoney)
                   },
 
-                  modifyPair: (odd, type, Odds) => {
+                  modifyPair: (odd, type_value, Odds) => {
                     if(odd !== ""){
                       let finalNewTicket = this.state.NewTicket;
                       let newTotalOdd = this.state.totalOdd
@@ -149,7 +150,7 @@ class MyProvider extends Component {
                       let newAlertMessage = this.state.alertMessage;
   
                       //check if we already bet on that exat odd, if yes, remove it from NewTicket
-                      let oddAlreadyExists = finalNewTicket.filter(pair => pair.odds.id === Odds.id && pair.type === type);
+                      let oddAlreadyExists = finalNewTicket.filter(pair => pair.odds.id === Odds.id && pair.type_value === type_value);
   
                       if(oddAlreadyExists.length > 0){
                         this.removePair(Odds.id, odd);
@@ -170,7 +171,7 @@ class MyProvider extends Component {
                           }
   
                           //check if we already bet on one special match
-                          let specialMatchAlreadyExists = finalNewTicket.filter(pair => pair.odds.type === "Special offer" && Odds.type === "Special offer");                    
+                          let specialMatchAlreadyExists = finalNewTicket.filter(pair => pair.odds.odd_type === "Special offer" && Odds.odd_type === "Special offer");                    
                           
                           specialMatchAlreadyExists.map( pair => {
                             newTotalOdd = newTotalOdd / pair.odd;
@@ -178,11 +179,11 @@ class MyProvider extends Component {
                           })
   
                           if(specialMatchAlreadyExists.length > 0){
-                            finalNewTicket = [...this.state.NewTicket].filter(pair => pair.odds.match.id !== Odds.match.id).filter(pair => pair.odds.type !== "Special offer" && Odds.type === "Special offer");
+                            finalNewTicket = [...this.state.NewTicket].filter(pair => pair.odds.match.id !== Odds.match.id).filter(pair => pair.odds.odd_type !== "Special offer" && Odds.odd_type === "Special offer");
                           }                    
   
                           //check if constraint is no longer needed
-                          if( specialMatchAlreadyExists.length === 0 && (pairAlreadyExists.length > 0 || (this.state.alertMessage === 'With Special offer you have to combine 5 Basic offers with Odd >= 1.10!' && finalNewTicket.filter(pair => pair.odds.type === "Basic" && pair.odd >= 1.10).length >= 4 && odd >= 1.10)) ){
+                          if( specialMatchAlreadyExists.length === 0 && (pairAlreadyExists.length > 0 || (this.state.alertMessage === 'With Special offer you have to combine 5 Basic offers with Odd >= 1.10!' && finalNewTicket.filter(pair => pair.odds.odd_type === "Basic" && pair.odd >= 1.10).length >= 4 && odd >= 1.10)) ){
                             isAlertNotNeeded = true;
                             newAlertMessage = '';
                           }
@@ -197,7 +198,7 @@ class MyProvider extends Component {
                           const newPair = {
                             "odds": Odds,
                             "odd": odd,
-                            "type": type
+                            "type_value": type_value
                           };
                             this.setState({ NewTicket: [...finalNewTicket, newPair], totalOdd: newTotalOdd, possibleGain: newPossibleGain, tax: newTax, isHidden: isAlertNotNeeded, alertMessage: newAlertMessage })
                       }
@@ -238,18 +239,16 @@ class MyProvider extends Component {
                         finalNewTicket = [...finalNewTicket, 
                           ticketOdd = {
                           "ticket": {
-                            "totalodd": this.state.totalOdd,
-                            "possiblegain": this.state.possibleGain - this.state.tax,
+                            "total_odd": this.state.totalOdd,
+                            "possible_gain": this.state.possibleGain - this.state.tax,
                             "transaction": {
-                                "money": this.state.money,
-                                    "user": {
-                                    "id": 1
-                                }
+                                "money": parseInt(this.state.money),
+                                    "user": 1
                             }
                           },
                           "odds": ticketOdd.odds,
                           "odd": ticketOdd.odd,
-                          "type": ticketOdd.type
+                          "type_value": ticketOdd.type_value
                           }]
                       return null;
                     })
@@ -261,7 +260,7 @@ class MyProvider extends Component {
                   },
 
                   isOddTypeOfPairSelected: (oddId, oddTypeValue) => {
-                    return this.state.NewTicket.some(pair => pair.odds.id === oddId && pair.type === oddTypeValue);
+                    return this.state.NewTicket.some(pair => pair.odds.id === oddId && pair.type_value === oddTypeValue);
                   },
 
                   deleteNewTicket: () =>{
@@ -280,7 +279,7 @@ class MyProvider extends Component {
                     else if( moneyValue > this.state.User.money){
                       this.setState({isHidden : false, alertMessage : "You don't have enough money in your account!"});
                     }
-                    else if( this.state.NewTicket.filter(pair => pair.odds.type === "Special offer").length === 1 && this.state.NewTicket.filter(pair => pair.odds.type === "Basic" && pair.odd >= 1.10).length < 5){
+                    else if( this.state.NewTicket.filter(pair => pair.odds.odd_type === "Special offer").length === 1 && this.state.NewTicket.filter(pair => pair.odds.odd_type === "Basic" && pair.odd >= 1.10).length < 5){
                       this.setState({isHidden : false, alertMessage : 'With Special offer you have to combine 5 Basic offers with Odd >= 1.10!'});
                     }
                     else{
