@@ -4,6 +4,10 @@ from .serializers import UserSerializer, TransactionUserSerializer, TransactionS
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
+from django.utils import timezone
+import pytz
+from django.views.decorators.csrf import csrf_exempt
+from braces.views import CsrfExemptMixin
 
 #function for getting object of model "model" with id "id"
 def get_object(id, model):
@@ -74,8 +78,8 @@ class TransactionView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class TransactionsView(APIView):
-
+class TransactionsView(CsrfExemptMixin, APIView):
+    authentication_classes = []
     #get all the transactions in descending ordered
     def get(self, request):
         transactions = Transaction.objects.all().order_by('-transaction_time')
@@ -229,7 +233,7 @@ class OddsPerMatchView(APIView):
 class OddsView(APIView):
 
     def get(self, request):
-        odds = Odds.objects.all()
+        odds = Odds.objects.filter(match__match_time__gte=timezone.now())
         serializer = OddsMatchSerializer(odds, many=True)
         return Response(serializer.data)
     #Basic user can't use this
@@ -263,7 +267,8 @@ class TicketOddsDetailsView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class TicketOddsView(APIView):
+class TicketOddsView(CsrfExemptMixin, APIView):
+    authentication_classes = []
     #Basic user can't use this, gets all pairs of all tickets
     def get(self, request):
         ticketOdds = TicketOdds.objects.all()
