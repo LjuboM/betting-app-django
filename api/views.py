@@ -230,7 +230,7 @@ class OddsView(APIView):
 
     def get(self, request):
         odds = Odds.objects.all()
-        serializer = OddsSerializer(odds, many=True)
+        serializer = OddsMatchSerializer(odds, many=True)
         return Response(serializer.data)
     #Basic user can't use this
     def post(self, request):
