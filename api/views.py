@@ -246,7 +246,7 @@ class OddsView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class TicketOddsDetailsView(APIView):
+class TicketOddsPairView(APIView):
 
     def get(self, request, id):
         ticketOdds = get_object(id, TicketOdds)
@@ -265,6 +265,14 @@ class TicketOddsDetailsView(APIView):
         ticketOdds = get_object(id, TicketOdds)
         ticketOdds.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class TicketOddsPairsView(APIView):
+
+    def get(self, request, id):
+        ticketOdds = TicketOdds.objects.filter(ticket=id)
+        serializer = AllSerializer(ticketOdds, many=True)
+        return Response(serializer.data)
 
 
 class TicketOddsView(CsrfExemptMixin, APIView):
@@ -305,7 +313,6 @@ class TicketOddsView(CsrfExemptMixin, APIView):
 
             ticketOdd_serializer = TicketOddsSerializer(data=ticketOdd)
             if ticketOdd_serializer.is_valid():
-                print('ticketOdd uredu') ##remove
                 ticketOdd_serializer.save()
             else:
                 #this should happen rarely, so deleting after save is not big problem

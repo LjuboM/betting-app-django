@@ -80,3 +80,6 @@ class TicketOdds(models.Model):
     odds = models.ForeignKey(Odds, on_delete=models.CASCADE)
     odd = models.FloatField()
     type_value = models.CharField(max_length=15)
+
+    def __str__(self):
+        return "%s %s" % (self.ticket, self.odds)
