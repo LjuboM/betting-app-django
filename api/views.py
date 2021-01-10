@@ -197,7 +197,7 @@ class TicketsView(APIView):
 
     def get(self, request):
         ticket = Ticket.objects.all()
-        serializer = TicketSerializer(ticket, many=True)
+        serializer = TicketTransactionSerializer(ticket, many=True)
         return Response(serializer.data)
     #Tickets are not supposed to be added trough this option... but leaving this option for now.
     def post(self, request):
@@ -282,6 +282,7 @@ class TicketOddsView(CsrfExemptMixin, APIView):
         ticketOdds = TicketOdds.objects.all()
         serializer = TicketOddsSerializer(ticketOdds, many=True)
         return Response(serializer.data)
+    #def ticketValidations    
     #Still needs validations !!!
     def post(self, request):
         #Add validations !!!
