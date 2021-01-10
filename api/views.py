@@ -5,9 +5,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from django.utils import timezone
+import datetime
 import pytz
 from django.views.decorators.csrf import csrf_exempt
 from braces.views import CsrfExemptMixin
+import collections
 
 #function for getting object of model "model" with id "id"
 def get_object(id, model):
@@ -282,10 +284,36 @@ class TicketOddsView(CsrfExemptMixin, APIView):
         ticketOdds = TicketOdds.objects.all()
         serializer = TicketOddsSerializer(ticketOdds, many=True)
         return Response(serializer.data)
-    #def ticketValidations    
-    #Still needs validations !!!
+
+
+
     def post(self, request):
-        #Add validations !!!
+
+        #Check if any Match has already started.
+        match_already_started = filter(lambda pair: datetime.datetime.strptime(pair['odds']['match']['match_time'], "%Y-%m-%dT%H:%M:%S%z") < timezone.now(), request.data)
+        if len(list(match_already_started)) > 0:
+            return Response("At least one match already started, can't place a bet!", status=status.HTTP_400_BAD_REQUEST)
+
+        #Check if Special offer was played
+        special_offer = filter(lambda pair: pair['odds']['odd_type'] == 'Special offer', request.data)
+        special_offers_number = len(list(special_offer))
+        if special_offers_number == 1:
+            bigger_odds = list(filter(lambda pair: pair['odd'] >= 1.10 and pair['odds']['odd_type'] == 'Basic', request.data))
+            #Since special offer was played, check if we have another 5 basic odds with coefficient 1.10 or higher.
+            if len(bigger_odds) < 5:
+                return Response('You have to play at least 5 matches with coefficient 1.10 or higher with Special offer', status=status.HTTP_400_BAD_REQUEST)
+        elif special_offers_number > 1:
+             return Response("You can't play more than one Special offer", status=status.HTTP_400_BAD_REQUEST)
+
+        match_ids = []
+        for pair in request.data:
+            match_ids.append(pair['odds']['match']['id'])
+        #Find occurences of each match in the ticket
+        matches_count = collections.Counter(match_ids)
+        print(matches_count)
+        if any(c > 1 for c in matches_count.values()):
+            return Response("You can't play same match twice!", status=status.HTTP_400_BAD_REQUEST)
+
         user_id = request.data[0]['ticket']['transaction']['user']
         user = get_object(user_id, User)
         user.money = user.money - request.data[0]['ticket']['transaction']['money']
@@ -309,9 +337,7 @@ class TicketOddsView(CsrfExemptMixin, APIView):
         ticketOdds = request.data
         for ticketOdd in ticketOdds:
             ticketOdd['ticket'] = Ticket.objects.latest('id').id
-            #I must remove those odds in frontend, I don't need to send them!!!
             ticketOdd['odds'] = ticketOdd['odds']['id']
-
             ticketOdd_serializer = TicketOddsSerializer(data=ticketOdd)
             if ticketOdd_serializer.is_valid():
                 ticketOdd_serializer.save()
