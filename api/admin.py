@@ -1,5 +1,13 @@
 from django.contrib import admin
-from .models import User, Transaction, Types, Match, Odds, Ticket, TicketOdds
+from .models import (
+    User,
+    Transaction,
+    Types,
+    Match,
+    Odds,
+    Ticket,
+    TicketOdds
+)
 
 admin.site.register(User)
 admin.site.register(Transaction)

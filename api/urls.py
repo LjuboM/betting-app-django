@@ -1,5 +1,21 @@
 from django.urls import path
-from .views import UserView, UsersView, TransactionView, TransactionsView, TypesPerSportView, TypesView, MatchView, MatchesView, TicketView, TicketsView, OddsPerMatchView, OddsView, TicketOddsPairView, TicketOddsPairsView, TicketOddsView
+from .views import (
+    UserView,
+    UsersView,
+    TransactionView,
+    TransactionsView,
+    TypesPerSportView,
+    TypesView,
+    MatchView,
+    MatchesView,
+    TicketView,
+    TicketsView,
+    OddsPerMatchView,
+    OddsView,
+    TicketOddsPairView,
+    TicketOddsPairsView,
+    TicketOddsView
+)
 
 urlpatterns = [
     path('user/<int:id>/', UserView.as_view()),
